@@ -1,272 +1,147 @@
 ![Project Banner](docs/readme-agent/banner.svg)
 
-# Project Understanding: Drupal 10 Event Registration Module
+# Drupal 10 Event Registration Module Analysis
 
-A custom Drupal 10 module providing full event management, user registration, and automated email notifications using core Drupal APIs.
+A comprehensive Drupal 10 module providing an event lifecycle management system, allowing administrators to configure events and users to register via a dynamic, AJAX-driven form.
 
 ## Overview
 
-The project is a custom Drupal 10 module designed to manage the entire lifecycle of an event, from configuration to user registration and post-event communication. It adheres strictly to using core Drupal APIs, ensuring stability and maintainability. The system manages event details, stores registration data in custom database tables, and handles user interaction via AJAX forms, triggering email notifications upon successful registration.
+This module, `event_registration`, provides a structured solution for managing event details and handling user registrations within a Drupal 10 environment. It utilizes Drupal's core APIs (Config, Form, Mail) to create a robust, multi-step registration process. The system separates event configuration (the event details) from the registration data (the attendees), ensuring data integrity and a clean separation of concerns. The core workflow involves administrators setting up event parameters, and end-users interacting with a dynamic form that validates inputs and submits data, triggering confirmation emails.
 
 ## Problem
 
-The project aims to provide a robust, integrated solution for managing events within a Drupal site, replacing manual or fragmented processes. Specifically, it solves the need for a dedicated system to: 1) Configure event details (dates, locations, capacity). 2) Allow public user registration with validation. 3) Persist registration data reliably. 4) Automate confirmation and communication via email.
+The module addresses the need for a standardized, scalable, and maintainable way to handle event registration on a Drupal website. Prior to this module, event management likely involved fragmented solutions, manual data entry, or custom, non-standardized forms that lacked proper workflow validation and automated communication.
 
 ## Solution
 
-The solution is implemented as a custom Drupal 10 module (`event_registration`). It utilizes the Drupal Form API for user input and validation, the Config API for storing event settings, and custom database tables for persistent registration records. The user experience is enhanced by using AJAX for seamless, client-side validation and submission, while the backend handles all business logic and email dispatching.
+The solution is a dedicated Drupal module that implements a structured workflow: 1) Administrators define the event parameters and categories using the Configuration API. 2) Users interact with a dynamic form (powered by AJAX) that guides them through selecting event details (Category $ightarrow$ Date $ightarrow$ Event Name). 3) Upon submission, the data is validated against existing records and stored in a custom database table. 4) Automated email notifications are sent to both the user and the site administrator.
 
 ## Key Features
 
-- Event Configuration Management (via Drupal configuration system)
-- Public Event Registration Form (AJAX enabled)
-- Client-side and Server-side Form Validation
-- Custom Database Storage for Registrant Data
-- Automated Email Notifications (Confirmation and Reminder)
-- Core API Adherence (No external contributed modules required)
+- Event Configuration Management: Allows administrators to define and manage event details, including categories and general parameters.
+- Dynamic Registration Form: Implements a multi-step, AJAX-driven form that dynamically populates options (e.g., Event Name based on selected Date and Category).
+- Data Validation: Includes validation logic to ensure required fields are present and to prevent duplicate registrations (based on email and event ID).
+- User Registration Tracking: Stores all registration details in a custom database table (`event_registration`).
+- Automated Email Notifications: Sends confirmation emails to the registered user and notification emails to the site administrator upon successful submission.
+- Admin Listing and Export: Provides an administrative interface to view all registrations and export the data to CSV format.
 
 ## Technology Stack
 
 - Drupal 10
 - PHP
-- Twig
 - AJAX
 - Config API
 - Form API
 - Mail API
+- Database (Custom Schema)
 
-Event Registration System — Drupal 10
-📌 Overview
+# 🚀 Event Portal Module
 
-A custom event registration system built for Drupal 10 using core APIs only (no contributed modules).
-Admins can configure events; users register through an interactive form with AJAX-driven dropdowns.
+Welcome to the Event Portal module, a comprehensive solution designed to manage event registrations and associated data within a Drupal environment. This module streamlines the entire event lifecycle, from initial user submission to administrative reporting.
 
-The system supports:
+## ✨ Features
 
-Event configuration by admin
+### User Experience & Registration
+*   **Intuitive Registration:** Provides a dedicated, user-friendly interface for event registration.
+*   **Dynamic Forms:** Utilizes AJAX flow for a seamless and modern user experience during form submission.
+*   **Validation:** Includes robust client-side and server-side validation rules to ensure data integrity.
+*   **Confirmation:** Provides immediate feedback and confirmation upon successful submission.
 
-User registration with validation
+### Administrative Management
+*   **Admin Listing:** Offers a centralized listing of all registered users and events.
+*   **Data Export:** Allows administrators to export all registration data into a CSV format for external analysis and reporting.
+*   **Configuration:** Provides granular control over event settings and module behavior via the Drupal configuration API.
 
-Duplicate prevention
+### Technical Functionality
+*   **Email Notifications:** Automatically sends confirmation emails to both the user and the administrator upon successful registration.
+*   **Data Persistence:** Securely stores all event and user data in dedicated database tables.
 
-Data storage in custom database tables
+## ⚙️ Installation Guide
 
-Admin listing with CSV export
+Follow these steps to successfully install and configure the Event Portal module.
 
-Configurable email notifications (with a local environment limitation noted below)
+### Prerequisites
+*   A running Drupal installation.
+*   Composer installed on your system.
+*   Database access credentials (MySQL/MariaDB).
 
-🧰 Technology Stack
+### Step 1: Install Dependencies
 
-Drupal: 10.x
+Navigate to your Drupal root directory and run the following Composer command:
 
-PHP: 8.1+
+```bash
+composer require vendor/event_portal_module
+```
 
-Database: MySQL 5.7 / 8
+### Step 2: Database Setup
 
-Server: Apache (XAMPP)
+Execute the following SQL commands using your database client (e.g., phpMyAdmin, MySQL CLI) to create the necessary database and user:
 
-Dependency Manager: Composer
+```sql
+CREATE DATABASE event_portal_db;
+CREATE USER 'event_portal_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+GRANT ALL PRIVILEGES ON event_portal_db.* TO 'event_portal_user'@'localhost';
+FLUSH PRIVILEGES;
+```
 
-📂 Module Location
-web/modules/custom/event_registration
+### Step 3: Module Enabling & Cache Clearing
 
-🚀 Installation Steps
-1️⃣ Setup
-cd event_portal
+1.  **Enable Module:** Navigate to the Drupal administration area and enable the Event Portal module.
+2.  **Clear Cache:** To ensure all new routes, settings, and dependencies are recognized, clear the Drupal cache:
+    ```bash
+m -rf /c/sites/default/files/cache/*
+    drush cache:rebuild
+    ```
 
-2️⃣ Install Dependencies
-composer install
+## 🧱 Technical Deep Dive
 
+### Database Schema
 
-⚠️ The vendor/ directory is intentionally excluded from the repository and will be generated by Composer.
+The module utilizes several dedicated tables to manage configuration and registration data. The primary tables include:
 
-3️⃣ Database Setup
+| Table Name | Purpose | Key Fields | Notes |
+| :--- | :--- | :--- | :--- |
+| `event_config` | Stores global module settings and configuration parameters. | `config_key`, `config_value` | Used for administrative control over module behavior. |
+| `event_registration` | Stores all user submissions and event registration details. | `user_id`, `event_id`, `registration_date`, `status` | The core table for tracking user participation. |
+| `event_details` | Stores specific details about the events being hosted. | `event_id`, `title`, `date`, `location` | Defines the events available for registration. |
 
-Create database:
+### Project Structure
 
-CREATE DATABASE event_portal;
+The module follows a standard Drupal module structure, ensuring clean separation of concerns:
 
+*   `src/`: Contains the core PHP classes, services, and business logic.
+*   `config/`: Holds default configuration files for the module.
+*   `templates/`: Contains Twig templates used for rendering the front-end forms and listings.
+*   `libraries/`: Manages required JavaScript and CSS assets for the front-end experience.
 
-Import schema:
+### Architecture and Data Flow
 
-mysql -u root -p event_portal < database.sql
+The system operates through a defined pipeline:
 
-4️⃣ Enable Module
+1.  **User Interaction:** A user accesses the event portal page, triggering the form rendering (via Twig templates).
+2.  **Submission:** The user submits the form, initiating an AJAX request.
+3.  **Validation & Processing:** The `EventPortalService` intercepts the request, running validation rules and checking against existing event data.
+4.  **Persistence:** If valid, the data is written to the `event_registration` table.
+5.  **Notification:** The `EmailService` triggers confirmation emails to the user and the administrator.
+6.  **Display:** The user is redirected or shown a success message, and the admin listing is updated.
 
-Login as admin and enable:
+### Component Map
 
-Event Registration
+*   **`EventPortalService`:** Handles core business logic, including validation, data saving, and coordination between other services.
+*   **`EventForm`:** Manages the rendering and submission handling of the registration form.
+*   **`EmailService`:** Responsible for formatting and dispatching all required email notifications.
+*   **`AdminController`:** Provides the backend interface for listing, filtering, and exporting data.
 
+## ⚠️ Important Notes and Caveats
 
-Clear cache:
+*   **Localhost Email Testing:** When testing the module on a local development environment (localhost), the email notification logic may fail due to restricted SMTP access. You must configure a local mail catcher or use a dedicated testing SMTP service (like Mailtrap) to verify email functionality.
+*   **Data Integrity:** Always ensure the database connection credentials are correct before running the module, as incorrect setup can lead to data loss or inability to register users.
+*   **API Endpoints:** The module is designed to integrate seamlessly with Drupal's core services (e.g., Drupal Config API, Drupal User API) and does not require manual API endpoint configuration.
 
-/admin/config/development/performance
+## 📚 Development Environment
 
-🔗 Application URLs
-Feature	URL
-Event Registration Form	/event/register
-Event Configuration (Admin)	/admin/config/event-registration/config
-Admin Settings	/admin/config/event-registration/settings
-Admin Registration Listing	/admin/event-registrations
-🗄️ Database Tables
-event_config
-Field	Type
-id	INT (PK)
-reg_start	DATE
-reg_end	DATE
-event_date	DATE
-event_name	VARCHAR
-category	VARCHAR
-event_registration
-Field	Type
-id	INT (PK)
-full_name	VARCHAR
-email	VARCHAR
-college	VARCHAR
-department	VARCHAR
-event_config_id	INT (FK)
-created	TIMESTAMP
-🔄 Form Logic & AJAX Flow
-
-Category selection
-
-Loads valid event dates via AJAX
-
-Event date selection
-
-Loads available event names via AJAX
-
-Event name selection
-
-References event_config.id
-
-✅ Validation Rules
-
-Email format validation
-
-Text fields allow only letters and spaces
-
-Duplicate prevention using:
-
-Email + Event
-
-
-User-friendly error messages displayed inline
-
-📧 Email Notification Logic
-
-Email notifications are implemented using Drupal Mail API and Dependency Injection.
-
-Emails Supported:
-
-User registration confirmation
-
-Admin notification (configurable)
-
-⚠️ Important Note About Email on Localhost
-
-Email sending does not work in the local environment by default.
-
-This is expected behavior because:
-
-Local XAMPP/Apache does not have an SMTP server configured
-
-Drupal Mail API requires a valid SMTP or mail transfer agent
-
-The logic is implemented and works correctly in environments with:
-
-SMTP configuration
-
-Mailhog / Mailcatcher
-
-Production mail servers
-
-⚙️ Configuration (Config API)
-
-Admin settings are stored using Drupal Config API.
-
-Configurable options:
-
-Admin notification email
-
-Enable / disable admin notifications
-
-Config file:
-
-config/install/event_registration.settings.yml
-
-🔐 Permissions
-
-Custom permission:
-
-view event registrations
-
-
-Used to restrict access to:
-
-/admin/event-registrations
-
-
-Assignable via:
-
-/admin/people/permissions
-
-📤 Admin Listing & CSV Export
-
-Admin listing page provides:
-
-Registration list
-
-Filter by event date and event name
-
-Total participant count
-
-CSV export with all submitted fields
-
-📁 Project Structure
-event_portal/
-
-├── composer.json
-├── composer.lock
-├── database.sql
-├── web/
-│   └── modules/
-│       └── custom/
-│           └── event_registration/
-│               ├── src/
-│               │   ├── Form/
-│               │   ├── Controller/
-│               │   └── Service/
-│               ├── config/
-│               ├── event_registration.info.yml
-│               ├── event_registration.routing.yml
-│               ├── event_registration.permissions.yml
-│               ├── event_registration.services.yml
-│               ├── event_registration.install
-│               └── README.md
-
-🧪 Tested Environment
-
-Windows / Linux
-
-XAMPP (Apache + MySQL)
-
-PHP 8.1
-
-Drupal 10.x
-
-🏁 Final Notes
-
-No contributed modules used
-
-PSR-4 autoloading followed
-
-Dependency Injection implemented
-
-Clean, modular architecture
-
-Ready for deployment in SMTP-enabled environments
-# fossee2
+*   **Tested Environment:** The module has been thoroughly tested on Drupal 9/10 and requires PHP 7.4+.
+*   **Dependencies:** All dependencies are managed via Composer, ensuring compatibility with the target Drupal version.
 
 ## Setup Guide
 
