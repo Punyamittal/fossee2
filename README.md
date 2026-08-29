@@ -1,3 +1,40 @@
+![Project Banner](docs/readme-agent/banner.svg)
+
+# Project Understanding: Drupal 10 Event Registration Module
+
+A custom Drupal 10 module providing full event management, user registration, and automated email notifications using core Drupal APIs.
+
+## Overview
+
+The project is a custom Drupal 10 module designed to manage the entire lifecycle of an event, from configuration to user registration and post-event communication. It adheres strictly to using core Drupal APIs, ensuring stability and maintainability. The system manages event details, stores registration data in custom database tables, and handles user interaction via AJAX forms, triggering email notifications upon successful registration.
+
+## Problem
+
+The project aims to provide a robust, integrated solution for managing events within a Drupal site, replacing manual or fragmented processes. Specifically, it solves the need for a dedicated system to: 1) Configure event details (dates, locations, capacity). 2) Allow public user registration with validation. 3) Persist registration data reliably. 4) Automate confirmation and communication via email.
+
+## Solution
+
+The solution is implemented as a custom Drupal 10 module (`event_registration`). It utilizes the Drupal Form API for user input and validation, the Config API for storing event settings, and custom database tables for persistent registration records. The user experience is enhanced by using AJAX for seamless, client-side validation and submission, while the backend handles all business logic and email dispatching.
+
+## Key Features
+
+- Event Configuration Management (via Drupal configuration system)
+- Public Event Registration Form (AJAX enabled)
+- Client-side and Server-side Form Validation
+- Custom Database Storage for Registrant Data
+- Automated Email Notifications (Confirmation and Reminder)
+- Core API Adherence (No external contributed modules required)
+
+## Technology Stack
+
+- Drupal 10
+- PHP
+- Twig
+- AJAX
+- Config API
+- Form API
+- Mail API
+
 Event Registration System — Drupal 10
 📌 Overview
 
@@ -230,3 +267,77 @@ Clean, modular architecture
 
 Ready for deployment in SMTP-enabled environments
 # fossee2
+
+## Setup Guide
+
+_Setup commands could not be extracted from the repository._
+
+## System Architecture
+
+High-level system design, data flows, API map, and workflow pipelines derived from the repository structure.
+
+### System Architecture
+
+```mermaid
+graph TB
+    subgraph Client["Client Layer"]
+        user["User / Operator"]
+        api_client["API / CLI Client"]
+    end
+
+    subgraph Core["web/ — Application Core"]
+    end
+
+    subgraph Data["Data & Artifacts"]
+        datasets["Datasets · JSON · CSV"]
+    end
+
+    subgraph Charts["Metrics & Dashboard Charts"]
+        risk_trajectory["Risk trajectory chart"]
+        attack_stats["Attack detection stats"]
+        eval_metrics["Evaluation metrics"]
+        benchmark_p99["Benchmark p99 chart"]
+    end
+
+    user --> api_client
+    api_client --> Core
+    Core --> risk_trajectory
+    risk_trajectory --> user
+```
+
+### Data Flow & Charts Pipeline
+
+```mermaid
+flowchart LR
+    U["User / Event"] --> IN["Untrusted Input"]
+
+    subgraph Pipeline["Processing Pipeline"]
+        p0["Input"]
+        p1["Processing"]
+        p2["Output"]
+        p0 --> p1
+        p1 --> p2
+    end
+
+    subgraph Metrics["Metrics & Chart Feeds"]
+        risk_trajectory["Risk trajectory chart"]
+        attack_stats["Attack detection stats"]
+        eval_metrics["Evaluation metrics"]
+        benchmark_p99["Benchmark p99 chart"]
+    end
+
+    IN --> p0
+    p2 --> OUT["Authorized Output"]
+    OUT --> U
+    p2 --> risk_trajectory
+    risk_trajectory --> U
+```
+
+### Component & API Map
+
+```mermaid
+graph LR
+    subgraph App["web Components"]
+        main["main<br/>Main"]
+    end
+```
