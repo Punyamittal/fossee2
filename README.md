@@ -281,35 +281,31 @@ High-level system design, data flows, API map, and workflow pipelines derived fr
 ```mermaid
 graph TB
     subgraph Client["Client Layer"]
-        user["User / Operator"]
+        user["User"]
         api_client["API / CLI Client"]
     end
 
-    subgraph Core["web/ — Application Core"]
+    subgraph Core["Fossee2"]
     end
 
     subgraph Data["Data & Artifacts"]
-        datasets["Datasets · JSON · CSV"]
+        d0["composer.json"]
     end
 
-    subgraph Charts["Metrics & Dashboard Charts"]
-        risk_trajectory["Risk trajectory chart"]
-        attack_stats["Attack detection stats"]
-        eval_metrics["Evaluation metrics"]
-        benchmark_p99["Benchmark p99 chart"]
+    subgraph Charts["fossee2 — Metrics & Views"]
+        dataset_viz["Dataset visualization"]
     end
 
     user --> api_client
     api_client --> Core
-    Core --> risk_trajectory
-    risk_trajectory --> user
+    dataset_viz --> user
 ```
 
 ### Data Flow & Charts Pipeline
 
 ```mermaid
 flowchart LR
-    U["User / Event"] --> IN["Untrusted Input"]
+    U["User / Event"] --> IN["Input Data"]
 
     subgraph Pipeline["Processing Pipeline"]
         p0["Input"]
@@ -319,25 +315,22 @@ flowchart LR
         p1 --> p2
     end
 
-    subgraph Metrics["Metrics & Chart Feeds"]
-        risk_trajectory["Risk trajectory chart"]
-        attack_stats["Attack detection stats"]
-        eval_metrics["Evaluation metrics"]
-        benchmark_p99["Benchmark p99 chart"]
+    subgraph Metrics["fossee2 — Views & Metrics"]
+        dataset_viz["Dataset visualization"]
     end
 
     IN --> p0
-    p2 --> OUT["Authorized Output"]
+    p2 --> OUT["Output"]
     OUT --> U
-    p2 --> risk_trajectory
-    risk_trajectory --> U
+    p2 --> dataset_viz
+    dataset_viz --> U
 ```
 
 ### Component & API Map
 
 ```mermaid
 graph LR
-    subgraph App["web Components"]
+    subgraph App["fossee2 Components"]
         main["main<br/>Main"]
     end
 ```
